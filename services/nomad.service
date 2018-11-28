@@ -1,0 +1,17 @@
+[Unit]
+Description=Nomad
+Documentation=https://nomadproject.io/docs/
+Wants=consul
+After=consul
+
+[Service]
+KillMode=process
+KillSignal=SIGINT
+EnvironmentFile=/etc/ops/env
+ExecStart=/usr/local/bin/nomad agent -consul-address=127.0.0.1:8500 -dc=${DC} -encrypt=${ENCKEY} -network-interface=${IFACE} -data-dir=/var/lib/nomad -config=/etc/ops/nomad.hcl $NOMAD_ROLE_FLAGS
+ExecReload=/bin/kill -HUP $MAINPID
+LimitNOFILE=65536
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
