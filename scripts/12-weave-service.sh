@@ -8,7 +8,7 @@ set -e # stop on error
 
 sudo mv /etc/ops/weave.service /etc/systemd/system/weave.service 
 
-[[ "$WEAVE" == "yes" ]] &&  sudo mv /etc/ops/weave-enc.service /etc/systemd/system/weave.service 
+[[ "$WEAVE_ENC" == "yes" ]] &&  sudo mv /etc/ops/weave-enc.service /etc/systemd/system/weave.service 
 
 weave status && exit 0  # stop if active
 
