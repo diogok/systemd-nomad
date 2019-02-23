@@ -7,7 +7,7 @@ command -v consul && exit 0 || true
 
 sudo mkdir -p /var/lib/consul
 
-version=1.4.0
+version=1.4.2
 arch=$(arch)
 [[ "$arch" == "armv6l" ]] && arch="arm"
 [[ "$arch" == "x86_64" ]] && arch="amd64"

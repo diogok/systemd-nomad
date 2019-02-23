@@ -6,7 +6,7 @@ command -v nomad &&  exit 0 # stop if nomad is installed
 
 sudo mkdir -p /var/lib/nomad
 
-version=0.8.6
+version=0.8.7
 arch=$(arch)
 [[ "$arch" == "armv6l" ]] && arch="arm"
 [[ "$arch" == "x86_64" ]] && arch="amd64"
