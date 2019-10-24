@@ -5,6 +5,7 @@ Scripts and config to provision Hashistack on systemd systems.
 Includes:
 
 - docker
+- cni plugins
 - weave
 - consul
 - nomad
@@ -56,12 +57,13 @@ Run all scripts in order.
 - The docker network or weave will have host exposed to the containers at 10.2.2.1
 - The weave network will have host exposed also at host.weave.local
 - It is important to setup INDEX env var specially at zero for first deployment
-- You can run the provision scripts anytime, it detects if it was already and run and exit properly 
+- You can run the provision scripts anytime, it detects if it was already run and exit properly 
 - Scripts try to detect architecture (arm, x86_64, darwin)
 - Connect is enabled on consul
 - The machine default DNS is set as rescursive DNS on consul
 - Nomad has prometheus metrics endpoint enabled
 - Nomad have docker privilieged and raw exec enabled
+- Nomad is connect enabled
 
 ## License
 

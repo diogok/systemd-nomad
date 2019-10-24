@@ -11,7 +11,7 @@ sudo mv /etc/ops/consul.service /etc/systemd/system/consul.service
 # Enable new UI
 echo CONSUL_UI_BETA=true >> /etc/ops/env
 # Enable conenct
-echo '{"connect":{"enabled":true}}' > /etc/ops/consul.json
+echo '{"connect":{"enabled":true},"ports":{"grpc":8502}}' > /etc/ops/consul.json
 
 # Set nameserver for recursive DNS
 NAMESERVER=`cat /etc/resolv.conf | grep nameserver | awk '{ print $2 }' | head -n1`

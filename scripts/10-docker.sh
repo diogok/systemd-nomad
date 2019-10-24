@@ -13,3 +13,4 @@ rm get-docker.sh
 # allow user to use docker without root
 export ME=`whoami` && sudo usermod -a -G docker $ME
 
+sudo systemctl enable docker

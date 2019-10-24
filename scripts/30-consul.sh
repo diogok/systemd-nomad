@@ -7,7 +7,7 @@ command -v consul && exit 0 || true
 
 sudo mkdir -p /var/lib/consul
 
-version=1.4.4
+version=1.6.1
 arch=$(arch)
 [[ "$arch" == "armv6l" ]] && arch="arm"
 [[ "$arch" == "x86_64" ]] && arch="amd64"
@@ -20,4 +20,6 @@ chmod +x consul
 sudo mv consul /usr/local/bin/consul
 
 consul -v
+
+sudo systemctl enable consul
 
