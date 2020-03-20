@@ -12,6 +12,7 @@ data "template_file" "cloud-init" {
 		nomad_version=var.nomad_version
 		consul_version=var.consul_version
 		architecture=var.architecture
+		volumes=join(",",var.volumes)
   }
 }
 

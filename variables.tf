@@ -35,3 +35,8 @@ variable "encryption_key" {
 	default="Luj2FZWwlt8475wD1WtwUQ=="
 }
 
+variable "volumes" {
+	default=[]
+	type=list(string)
+}
+
