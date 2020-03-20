@@ -34,8 +34,5 @@ cat /etc/systemd/system/consul.service
 
 sudo systemctl daemon-reload
 sudo systemctl enable consul
-
-if [ "$START" == "yes" ]; then
-  sudo systemctl start consul
-fi
+sudo systemctl start consul
 

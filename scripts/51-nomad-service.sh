@@ -29,9 +29,7 @@ cat /etc/systemd/system/nomad.service
 sudo systemctl daemon-reload
 sudo systemctl enable nomad
 
-if [ "$START" == "yes" ]; then
-  sudo systemctl start nomad
-  sleep 5
-  nomad server join $SEED || true
-fi
+sudo systemctl start nomad
+sleep 5
+nomad server join $SEED || true
 
