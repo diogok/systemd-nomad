@@ -17,8 +17,8 @@ write_files:
       ports {
         grpc=8502
       }
-      ${manager?"server=true":""}
-      ${manager_bootstrap?"bootstrap_expect=${manager_count}":""}
+      ${server?"server=true":""}
+      ${server_bootstrap?"bootstrap_expect=${server_count}":""}
   - path: /etc/systemd/system/consul.service
     content: |
       [Unit]
@@ -42,7 +42,7 @@ write_files:
         address="127.0.0.1:8500"
       }
       client { 
-        enabled = ${manager?"false":"true"}
+        enabled = ${server?"false":"true"}
         server_join {
           retry_join = ["${join}"]
         }
@@ -58,8 +58,8 @@ write_files:
         %{endfor}
       }
       server {
-        enabled = ${manager?"true":"false"}
-        ${manager_bootstrap?"bootstrap_expect=${manager_count}":""}
+        enabled = ${server?"true":"false"}
+        ${server_bootstrap?"bootstrap_expect=${server_count}":""}
         encrypt = "${encryption_key}"
         server_join {
           retry_join = ["${join}"]
@@ -83,7 +83,7 @@ write_files:
       [Service]
       KillMode=process
       KillSignal=SIGINT
-      ExecStart=/usr/local/bin/nomad agent --config /etc/nomad.d/ -${manager?"server":"client"}
+      ExecStart=/usr/local/bin/nomad agent --config /etc/nomad.d/ -${server?"server":"client"}
       ExecReload=/bin/kill -HUP $MAINPID
       LimitNOFILE=65536
       Restart=always
@@ -131,3 +131,4 @@ runcmd:
   - systemctl daemon-reload
   - systemctl enable nomad
   - systemctl start nomad
+

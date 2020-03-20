@@ -3,15 +3,15 @@ variable "join" {
 	default="127.0.0.1"
 }
 
-variable "manager" {
+variable "server" {
 	default=false
 }
 
-variable "manager_bootstrap" {
+variable "server_bootstrap" {
 	default=false
 }
 
-variable "manager_count" {
+variable "server_count" {
 	default=1
 }
 

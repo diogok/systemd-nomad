@@ -1,24 +1,24 @@
 
 
-render-cloud-init-manager:
-	@terraform apply -var manager=true -var manager_bootstrap=true > /dev/null
+render-cloud-init-server:
+	@terraform apply -var server=true -var server_bootstrap=true > /dev/null
 	@terraform output cloud-init
 
 render-cloud-init-client:
-	@terraform apply -var manager=false -var join=$(join) > /dev/null
+	@terraform apply -var server=false -var join=$(join) > /dev/null
 	@terraform output cloud-init
 
-launch-manager:
-	make render-cloud-init-manager | multipass launch --name=manager --cloud-init=-
+launch-server:
+	make render-cloud-init-server | multipass launch --name=server --cloud-init=-
 
 launch-client:
-	make render-cloud-init-client join=$$(multipass info manager --format=table | grep IP | awk '{print $$2}') | multipass launch --name=client --cloud-init=-
+	make render-cloud-init-client join=$$(multipass info server --format=table | grep IP | awk '{print $$2}') | multipass launch --name=client --cloud-init=-
 
 info:
 	multipass info --all
 
-shell-manager:
-	multipass shell manager
+shell-server:
+	multipass shell server
 
 shell-client:
 	multipass shell client

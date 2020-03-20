@@ -3,9 +3,9 @@ data "template_file" "cloud-init" {
   template = "${file("${path.module}/cloud-init.tpl.yml")}"
 
   vars = {
-		manager=var.manager
-		manager_count=var.manager_count
-		manager_bootstrap=var.manager_bootstrap
+		server=var.server
+		server_count=var.server_count
+		server_bootstrap=var.server_bootstrap
 		join=var.join
 		datacenter=var.datacenter
 		encryption_key=var.encryption_key
