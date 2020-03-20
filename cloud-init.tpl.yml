@@ -1,0 +1,125 @@
+packages:
+  - curl
+  - unzip
+
+write_files:
+  - path: /etc/consul.d/consul.hcl
+    content: |
+      datacenter="${datacenter}"
+      client_addr="0.0.0.0"
+      encrypt = "${encryption_key}"
+      data_dir="/var/lib/consul"
+      ui=true
+      retry_join=["${join}"]
+      connect {
+        enabled=true
+      }
+      ports {
+        grpc=8502
+      }
+      ${manager?"server=true":""}
+      ${manager_bootstrap?"bootstrap_expect=${manager_count}":""}
+  - path: /etc/systemd/system/consul.service
+    content: |
+      [Unit]
+      Description=Consul
+      Documentation=https://consul.io/docs/
+      Wants=network-online.target
+      After=network-online.target
+
+      [Service]
+      KillMode=process
+      ExecStart=/usr/local/bin/consul agent -config-dir=/etc/consul.d/
+      ExecReload=/usr/local/bin/consul reload
+      LimitNOFILE=65536
+      Restart=always
+
+      [Install]
+      WantedBy=multi-user.target
+  - path: /etc/nomad.d/nomad.hcl
+    content: |
+      consul {
+        address="127.0.0.1:8500"
+      }
+      client { 
+        enabled = ${manager?"false":"true"}
+        server_join {
+          retry_join = ["${join}"]
+        }
+        options { 
+          docker.privileged.enabled = true 
+          driver.aw_exec.enable = true
+        } 
+      }
+      server {
+        enabled = ${manager?"true":"false"}
+        ${manager_bootstrap?"bootstrap_expect=${manager_count}":""}
+        encrypt = "${encryption_key}"
+        server_join {
+          retry_join = ["${join}"]
+        }
+      }
+      telemetry { 
+        publish_allocation_metrics = true 
+        publish_node_metrics = true 
+        prometheus_metrics = true 
+      }
+      datacenter="${datacenter}"
+      data_dir="/var/lib/consul"
+  - path: /etc/systemd/system/nomad.service
+    content: |
+      [Unit]
+      Description=Nomad
+      Documentation=https://nomadproject.io/docs/
+      Wants=consul
+      After=consul
+
+      [Service]
+      KillMode=process
+      KillSignal=SIGINT
+      ExecStart=/usr/local/bin/nomad agent --config /etc/nomad.d/ -${manager?"server":"client"}
+      ExecReload=/bin/kill -HUP $MAINPID
+      LimitNOFILE=65536
+      Restart=always
+
+      [Install]
+      WantedBy=multi-user.target
+
+runcmd:
+  # set limits
+  - sysctl -w vm.max_map_count=262144
+  - echo vm.max_map_count=262144 | tee -a /etc/sysctl.conf
+  - sysctl -w fs.file-max=65536
+  - echo fs.file-max=65536 | tee -a /etc/sysctl.conf
+    # prepare tmp dir
+  - mkdir -p /opt/stack-init
+    # get consul
+  - curl https://releases.hashicorp.com/consul/${consul_version}/consul_${consul_version}_linux_${architecture}.zip -o /opt/stack-init/consul.zip
+  - unzip /opt/stack-init/consul.zip -d /opt/stack-init/
+  - cp /opt/stack-init/consul /usr/local/bin/consul
+  - chmod +x /usr/local/bin/consul
+    # set consul dns recursive server
+    #- echo recursors=\[\"`cat /etc/resolv.conf | grep nameserver | awk '{ print $2 }' | head -n1`\"\] > /etc/consul.d/recursor.hcl
+  - systemctl daemon-reload
+  - systemctl enable consul
+  - systemctl start consul
+    # get docker
+  - curl -fsSL get.docker.com -o /opt/stack-init/get-docker.sh
+  - chmod +x /opt/stack-init/get-docker.sh
+  - sh /opt/stack-init/get-docker.sh
+  - systemctl enable docker
+  - systemctl start docker
+    # get cni plugins
+  - curl -L -o /opt/stack-init/cni-plugins.tgz https://github.com/containernetworking/plugins/releases/download/v0.8.5/cni-plugins-linux-${architecture}-v0.8.5.tgz
+  - mkdir -p /opt/cni/bin
+  - tar -C /opt/cni/bin -xzf /opt/stack-init/cni-plugins.tgz
+    # docker network
+  - docker network create --subnet 10.2.2.0/24 --gateway 10.2.2.1 network
+    # get nomad
+  - curl https://releases.hashicorp.com/nomad/${nomad_version}/nomad_${nomad_version}_linux_${architecture}.zip -o /opt/stack-init/nomad.zip
+  - unzip /opt/stack-init/nomad.zip -d /opt/stack-init/
+  - cp /opt/stack-init/nomad /usr/local/bin/nomad
+  - chmod +x /usr/local/bin/nomad
+  - systemctl daemon-reload
+  - systemctl enable nomad
+  - systemctl start nomad

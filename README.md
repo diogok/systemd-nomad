@@ -6,15 +6,42 @@ Includes:
 
 - docker
 - cni plugins
-- weave
 - consul
 - nomad
+
+It can be used as a reference, as a terraform module (maybe...) or to generate and use cloud-init using terraform.
 
 To do:
 
 - vault
 
-## Dependencies
+## Cloud-init
+
+### Testing local
+
+You can test using [multipass](https://multipass.run/) and [terraform]().
+
+To launch manager:
+
+```
+make launch-manager
+```
+
+To launch client:
+
+```
+make launch-client
+```
+
+To see IPs and machines
+
+```
+make list
+```
+
+## Scripts and services
+
+### Dependencies
 
 On the machines you will need
 
@@ -24,7 +51,7 @@ On the machines you will need
 
 Also, run with non root.
 
-## Usage
+### Usage
 
 Copy all services to /etc/ops.
 
