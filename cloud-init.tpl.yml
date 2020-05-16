@@ -50,12 +50,15 @@ write_files:
           docker.privileged.enabled = true 
           driver.aw_exec.enable = true
         } 
-        %{for volume in split(",", volumes )}
+        %{for volume in volumes}
         host_volume "${volume}" {
           path = "/opt/data/${volume}"
           read_only=false
         }
         %{endfor}
+        meta {%{for key in keys(meta)}
+          "${key}"="${lookup(meta,key)}"
+        %{endfor}}
       }
       server {
         enabled = ${server?"true":"false"}
@@ -121,7 +124,7 @@ runcmd:
   - tar -C /opt/cni/bin -xzf /opt/stack-init/cni-plugins.tgz
     # docker network
   - docker network create --subnet 10.2.2.0/24 --gateway 10.2.2.1 network
-    # create volumes %{for volume in split(",", volumes )}
+    # create volumes %{for volume in volumes}
   - mkdir -p /opt/data/${volume}%{endfor}
     # get nomad
   - curl https://releases.hashicorp.com/nomad/${nomad_version}/nomad_${nomad_version}_linux_${architecture}.zip -o /opt/stack-init/nomad.zip

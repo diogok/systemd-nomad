@@ -50,3 +50,9 @@ variable "volumes" {
 	description="If we need to create nomad volumes on this host. Is a list of 'path0,path1,path2'. This will be created at /opt/data/$path0 and exposed on nomad with $path0 name."
 }
 
+variable "metadata" {
+  default={}
+  type=map
+  description="Metadata on nomad instances"
+}
+
