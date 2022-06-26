@@ -21,10 +21,10 @@ To do:
 
 You can test using [multipass](https://multipass.run/) and [terraform](https://www.terraform.io/).
 
-To launch manager:
+To launch server:
 
 ```
-make launch-manager
+make launch-server
 ```
 
 To launch client:
